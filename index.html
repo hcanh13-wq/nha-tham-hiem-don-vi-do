@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nhà thám hiểm đơn vị đo – Lớp 6</title>
+<style>
+:root{--ink:#172554;--muted:#64748b;--blue:#2563eb;--sky:#e0f2fe;--purple:#7c3aed;--green:#15803d;--red:#b91c1c;--paper:#f8fafc;--line:#dbeafe}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eff6ff,#f5f3ff 55%,#ecfeff);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+header{padding:28px 18px 24px;text-align:center;background:linear-gradient(120deg,#1d4ed8,#6d28d9);color:white}
+header .planet{font-size:2.4rem}header h1{margin:4px 0;font-size:clamp(1.6rem,4vw,2.5rem)}header p{margin:5px auto;max-width:760px;color:#e0e7ff}
+main{max-width:1080px;margin:22px auto;padding:0 14px 36px}.tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
+button,select,input{font:inherit}button,.tab{border:0;border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:700;transition:transform .12s,filter .12s}
+button:hover,.tab:hover{filter:brightness(.97);transform:translateY(-1px)}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.tab{background:white;color:#334155;border:1px solid #dbeafe}.tab.active{background:#1d4ed8;color:white}
+.panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px);box-shadow:0 12px 32px #1e3a8a12;margin-bottom:18px}
+h2{margin:0 0 8px;font-size:1.45rem}h3{margin:0 0 8px} .intro{color:var(--muted);margin-top:0}
+.category-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.category{padding:14px;border-radius:16px;background:#f8fafc;border:2px solid transparent;text-align:left;color:var(--ink)}
+.category.selected{border-color:#60a5fa;background:#eff6ff}.category span{display:block;font-size:1.5rem}.category small{color:var(--muted)}
+.converter{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end}
+.field label{display:block;font-weight:750;margin-bottom:6px}.field input,.field select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:12px;background:white;color:#0f172a}
+.swapline{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0}.swap{background:#ede9fe;color:#5b21b6}.clear{background:#f1f5f9;color:#334155}
+.result{margin-top:18px;padding:18px;border-radius:16px;background:linear-gradient(120deg,#eff6ff,#f5f3ff);border:1px solid #bfdbfe}
+.result-label{font-size:.9rem;color:#475569}.result-main{font-size:clamp(1.35rem,4vw,2rem);font-weight:850;overflow-wrap:anywhere}.explain{margin:8px 0 0;color:#334155}
+.note{font-size:.92rem;color:#475569;background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;border-radius:8px;margin-top:14px}
+.hidden{display:none!important}.question{padding:16px;background:#f8fafc;border-radius:14px;margin:12px 0}.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}.answer{background:white;border:1px solid #cbd5e1;text-align:left;color:var(--ink)}.answer.correct{background:#dcfce7;border-color:#22c55e}.answer.wrong{background:#fee2e2;border-color:#ef4444}
+.primary{background:#2563eb;color:white}.secondary{background:#ede9fe;color:#5b21b6}.success{color:var(--green);font-weight:750}.error{color:var(--red);font-weight:750}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.stat{background:#f1f5f9;border-radius:12px;padding:10px 14px;flex:1;min-width:110px}
+.footer{text-align:center;color:#64748b;font-size:.9rem;padding:4px 12px 20px}
+@media(max-width:650px){.category-row{grid-template-columns:1fr}.converter{grid-template-columns:1fr}.answers{grid-template-columns:1fr}.swapline{margin:10px 0}.panel{border-radius:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="planet" aria-hidden="true">🧭 ⏰ ⚖️ 📏</div>
+  <h1>Nhà thám hiểm đơn vị đo</h1>
+  <p>Ứng dụng Toán lớp 6 · Đổi đơn vị tức thì · Hiểu cách làm · Chinh phục thử thách</p>
+</header>
+<main>
+  <nav class="tabs" aria-label="Chức năng chính">
+    <button class="tab active" data-tab="convert">🔄 Đổi đơn vị</button>
+    <button class="tab" data-tab="practice">🧠 Luyện tập</button>
+    <button class="tab" data-tab="challenge">🏆 Thử thách</button>
+    <button class="tab" data-tab="guide">📘 Hướng dẫn</button>
+  </nav>
+
+  <section id="convert" class="panel">
+    <h2>🔎 Trạm chuyển đổi</h2>
+    <p class="intro">Nhập số, chọn đơn vị ban đầu và đơn vị muốn đổi. Kết quả cập nhật ngay khi em thao tác.</p>
+    <div class="category-row" role="group" aria-label="Chọn loại đại lượng">
+      <button class="category selected" data-kind="length"><span>📏</span><b>Chiều dài</b><small>km · m · cm · mm…</small></button>
+      <button class="category" data-kind="mass"><span>⚖️</span><b>Khối lượng</b><small>tấn · kg · g · mg…</small></button>
+      <button class="category" data-kind="time"><span>⏰</span><b>Thời gian</b><small>giây · phút · giờ · ngày…</small></button>
+    </div>
+    <div class="converter">
+      <div class="field"><label for="amount">Giá trị cần đổi</label><input id="amount" inputmode="decimal" value="2,5" autocomplete="off" aria-describedby="inputHelp"><small id="inputHelp">Có thể dùng dấu phẩy hoặc dấu chấm thập phân.</small></div>
+      <div class="field"><label for="fromUnit">Đơn vị ban đầu</label><select id="fromUnit"></select></div>
+      <div class="field"><label for="toUnit">Đơn vị muốn đổi</label><select id="toUnit"></select></div>
+      <div class="field"><label for="timeMode">Quy ước thời gian (nếu cần)</label><select id="timeMode"><option value="fixed">Chỉ dùng đơn vị cố định</option><option value="month30">Bài tập quy ước 1 tháng = 30 ngày</option><option value="year365">Bài tập quy ước 1 năm = 365 ngày</option><option value="year366">Bài tập quy ước 1 năm = 366 ngày</option></select></div>
+    </div>
+    <div class="swapline"><button id="swap" class="swap">⇅ Hoán đổi đơn vị</button><button id="clear" class="clear">Xóa dữ liệu</button></div>
+    <div class="result" aria-live="polite"><div class="result-label">KẾT QUẢ</div><div id="resultMain" class="result-main">2,5 m = 250 cm</div><p id="explanation" class="explain"></p><p id="feedback" role="status"></p></div>
+    <div class="note" id="timeNote">Lưu ý: Tháng có 28–31 ngày; năm thông thường có 365 ngày, năm nhuận có 366 ngày. Chỉ đổi tháng/năm khi đã chọn quy ước phù hợp.</div>
+  </section>
+
+  <section id="practice" class="panel hidden">
+    <h2>🧠 Phòng luyện tập</h2><p class="intro">Mỗi câu có bốn lựa chọn. Em nhận phản hồi và lời giải sau khi chọn đáp án.</p>
+    <div class="stats"><div class="stat">Câu: <b id="qCount">0/10</b></div><div class="stat">Điểm: <b id="score">0</b></div><div class="stat">Đúng: <b id="rightCount">0</b></div></div>
+    <div id="quizArea" class="question"></div><div id="quizFeedback" aria-live="polite"></div>
+    <div class="swapline"><button id="nextQuestion" class="primary">Câu tiếp theo →</button><button id="restartQuiz" class="clear">Làm lại</button></div>
+  </section>
+
+  <section id="challenge" class="panel hidden">
+    <h2>🏆 Chinh phục hành tinh đơn vị</h2><p class="intro">Trả lời nhanh và chính xác. Mỗi câu đúng được 10 điểm. Không bị trừ điểm khi sai!</p>
+    <div class="stats"><div class="stat">Điểm thử thách: <b id="gameScore">0</b></div><div class="stat">Chuỗi đúng: <b id="streak">0</b></div><div class="stat">Câu đã chơi: <b id="gameCount">0</b></div></div>
+    <div id="gameArea" class="question">Nhấn “Bắt đầu thử thách” để khám phá nhé!</div><div id="gameFeedback" aria-live="polite"></div>
+    <div class="swapline"><button id="startGame" class="primary">🚀 Bắt đầu thử thách</button><button id="nextGame" class="secondary hidden">Câu tiếp theo →</button></div>
+  </section>
+
+  <section id="guide" class="panel hidden">
+    <h2>📘 Hướng dẫn sử dụng</h2>
+    <ol>
+      <li>Chọn một trạm: Chiều dài, Khối lượng hoặc Thời gian.</li>
+      <li>Nhập giá trị, chọn đơn vị ban đầu và đơn vị cần đổi. Kết quả sẽ tự cập nhật.</li>
+      <li>Dùng nút “Hoán đổi đơn vị” để đổi chiều phép tính.</li>
+      <li>Đọc phần giải thích để hiểu vì sao cần nhân hoặc chia.</li>
+      <li>Vào “Luyện tập” để làm 10 câu hỏi hoặc “Thử thách” để tích lũy điểm.</li>
+    </ol>
+    <h3>Ghi nhớ nhanh</h3>
+    <ul><li>Chiều dài: mỗi bậc liền kề trong bảng km – hm – dam – m – dm – cm – mm gấp hoặc kém nhau 10 lần.</li>
+    <li>Khối lượng: 1 tấn = 1.000 kg; 1 kg = 1.000 g; 1 g = 1.000 mg.</li>
+    <li>Thời gian: 1 phút = 60 giây; 1 giờ = 60 phút; 1 ngày = 24 giờ; 1 tuần = 7 ngày.</li>
+    <li>Tháng và năm phụ thuộc lịch hoặc quy ước bài toán, không có một hệ số ngày duy nhất cho mọi trường hợp.</li></ul>
+    <p class="note">Ứng dụng dùng quy tắc đổi đơn vị phổ thông. Với tháng/năm, cần đọc kỹ quy ước của bài tập; không dùng kết quả quy ước thay cho tính toán theo lịch thực tế.</p>
+  </section>
+</main>
+<div class="footer">🌟 Học từng bước – hiểu bản chất – chinh phục đơn vị đo!<br>Ứng dụng chạy trực tiếp trên trình duyệt, không cần đăng nhập.</div>
+<script>
+"use strict";
+const units = {
+ length:[
+  {id:"km",name:"Kilômét (km)",factor:"1000"},{id:"hm",name:"Hectômét (hm)",factor:"100"},{id:"dam",name:"Đềcamét (dam)",factor:"10"},
+  {id:"m",name:"Mét (m)",factor:"1"},{id:"dm",name:"Đềximét (dm)",factor:"0.1"},{id:"cm",name:"Xentimét (cm)",factor:"0.01"},{id:"mm",name:"Milimét (mm)",factor:"0.001"}],
+ mass:[
+  {id:"t",name:"Tấn (t)",factor:"1000"},{id:"ta",name:"Tạ",factor:"100"},{id:"yen",name:"Yến",factor:"10"},{id:"kg",name:"Kilôgam (kg)",factor:"1"},
+  {id:"hg",name:"Hectôgam (hg)",factor:"0.1"},{id:"dag",name:"Đềcagam (dag)",factor:"0.01"},{id:"g",name:"Gam (g)",factor:"0.001"},{id:"mg",name:"Miligam (mg)",factor:"0.000001"}],
+ time:[
+  {id:"s",name:"Giây (s)",factor:"1"},{id:"min",name:"Phút (min)",factor:"60"},{id:"h",name:"Giờ (h)",factor:"3600"},{id:"day",name:"Ngày",factor:"86400"},{id:"week",name:"Tuần",factor:"604800"},
+  {id:"month",name:"Tháng (theo quy ước)",factor:null},{id:"year",name:"Năm (theo quy ước)",factor:null}]
+};
+const $=id=>document.getElementById(id);
+let kind="length";
+function parseDecimal(raw){
+ let s=String(raw).trim().replace(/\s/g,"");
+ if(!s)return {ok:false,empty:true};
+ if(s.includes(",")&&s.includes(".")) return {ok:false};
+ if((s.match(/[,.]/g)||[]).length>1)return {ok:false};
+ s=s.replace(",",".");
+ if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s))return {ok:false};
+ return {ok:true,value:s};
+}
+// Decimal string arithmetic: exact base-10 operations, avoiding binary floating-point artifacts.
+function decParts(s){
+ let neg=s.startsWith("-"); if(neg||s.startsWith("+"))s=s.slice(1);
+ let [a,b=""]=s.split("."); a=a||"0"; let digits=(a+b).replace(/^0+(?=\d)/,"")||"0";
+ return {neg:neg&&digits!=="0",digits,scale:b.length};
+}
+function normalizeDec(s){
+ let p=decParts(s),d=p.digits,sc=p.scale;
+ if(/^0+$/.test(d)) return "0";
+ while(sc>0&&d.endsWith("0")){d=d.slice(0,-1);sc--;}
+ if(d==="")d="0";
+ if(sc===0)return (p.neg?"-":"")+d;
+ if(d.length<=sc)d="0".repeat(sc-d.length+1)+d;
+ const out=d.slice(0,d.length-sc)+"."+d.slice(d.length-sc);
+ return (p.neg?"-":"")+out;
+}
+function multiplyDecimal(a,b){
+ const x=decParts(a),y=decParts(b);
+ const arr=Array(x.digits.length+y.digits.length).fill(0);
+ for(let i=x.digits.length-1;i>=0;i--)for(let j=y.digits.length-1;j>=0;j--)arr[i+j+1]+=Number(x.digits[i])*Number(y.digits[j]);
+ for(let k=arr.length-1;k>0;k--){arr[k-1]+=Math.floor(arr[k]/10);arr[k]%=10;}
+ return normalizeDec(((x.neg!==y.neg)?"-":"")+arr.join("")+"e"+(x.scale+y.scale));
+}
+// Parse the exact coefficient and scale into a decimal string; used for multiplication.
+function mul(a,b){
+ const x=decParts(a),y=decParts(b),arr=Array(x.digits.length+y.digits.length).fill(0);
+ for(let i=x.digits.length-1;i>=0;i--)for(let j=y.digits.length-1;j>=0;j--)arr[i+j+1]+=Number(x.digits[i])*Number(y.digits[j]);
+ for(let k=arr.length-1;k>0;k--){arr[k-1]+=Math.floor(arr[k]/10);arr[k]%=10;}
+ let d=arr.join("").replace(/^0+(?=\d)/,"")||"0",sc=x.scale+y.scale;
+ while(sc>0&&d.endsWith("0")){d=d.slice(0,-1);sc--;}
+ if(d.length<=sc)d="0".repeat(sc-d.length+1)+d;
+ let out=sc?d.slice(0,d.length-sc)+"."+d.slice(d.length-sc):d;
+ if(sc&&out.startsWith("."))out="0"+out;
+ return (x.neg!==y.neg&&d!=="0"?"-":"")+out;
+}
+function compareAbs(a,b){
+ let x=decParts(a),y=decParts(b),scale=Math.max(x.scale,y.scale);
+ let xd=x.digits+"0".repeat(scale-x.scale),yd=y.digits+"0".repeat(scale-y.scale);
+ xd=xd.replace(/^0+(?=\d)/,"");yd=yd.replace(/^0+(?=\d)/,"");
+ return xd.length!==yd.length?Math.sign(xd.length-yd.length):(xd===yd?0:(xd>yd?1:-1));
+}
+function divideDecimal(a,b,precision=14){
+ const x=decParts(a),y=decParts(b); if(y.digits==="0")throw Error("Không thể chia cho 0.");
+ // Long division with integer-scaled operands, then produce a finite display approximation only when needed.
+ let numerator=x.digits+"0".repeat(y.scale+precision), denominator=y.digits+"0".repeat(x.scale);
+ let rem=0n, den=BigInt(denominator), out="";
+ for(const ch of numerator){rem=rem*10n+BigInt(ch);out+=(rem/den).toString();rem%=den;}
+ out=out.replace(/^0+(?=\d)/,"")||"0";
+ if(/^0+$/.test(out)) return "0";
+ let scale=precision;
+ while(scale>0&&out.endsWith("0")){out=out.slice(0,-1);scale--;}
+ if(out.length<=scale)out="0".repeat(scale-out.length+1)+out;
+ let res=scale?out.slice(0,out.length-scale)+"."+out.slice(out.length-scale):out;
+ return ((x.neg!==y.neg&&out!=="0")?"-":"")+res;
+}
+function div(a,b){return normalizeDec(divideDecimal(a,b,16));}
+function fmt(s){
+ s=normalizeDec(s);let neg=s.startsWith("-");if(neg)s=s.slice(1);
+ let [whole,frac=""]=s.split(".");whole=whole.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+ return (neg?"-":"")+whole+(frac?","+frac:"");
+}
+function factorFor(unit){
+ if(kind!=="time")return unit.factor;
+ const mode=$("timeMode").value;
+ if(unit.id==="month")return mode==="month30"?"2592000":null;
+ if(unit.id==="year")return mode==="year365"?"31536000":mode==="year366"?"31622400":null;
+ return unit.factor;
+}
+function unitName(id){return units[kind].find(u=>u.id===id)?.name||id}
+function shortName(id){const u=units[kind].find(x=>x.id===id);return u?u.id:id}
+function populateUnits(){
+ const from=$("fromUnit"),to=$("toUnit"),oldF=from.value,oldT=to.value;
+ from.innerHTML="";to.innerHTML="";
+ units[kind].forEach(u=>{for(const sel of [from,to]){let o=document.createElement("option");o.value=u.id;o.textContent=u.name;sel.appendChild(o)}});
+ from.value=units[kind].some(u=>u.id===oldF)?oldF:units[kind][kind==="length"?3:kind==="mass"?3:0].id;
+ to.value=units[kind].some(u=>u.id===oldT)?oldT:units[kind][kind==="length"?5:kind==="mass"?6:1].id;
+ $("timeMode").disabled=kind!=="time";
+ updateConversion();
+}
+function updateConversion(){
+ const parsed=parseDecimal($("amount").value),from=$("fromUnit").value,to=$("toUnit").value;
+ $("timeNote").classList.toggle("hidden",kind!=="time");
+ $("feedback").className="";$("explanation").textContent="";
+ if(!parsed.ok){$("resultMain").textContent=parsed.empty?"Hãy nhập một giá trị số.":"Dữ liệu chưa hợp lệ. Hãy nhập số nguyên hoặc số thập phân."; $("feedback").textContent="Ví dụ hợp lệ: 12; 2,5; 0.75";$("feedback").className="error";return}
+ const a=parsed.value;
+ if(kind==="time"&&from!==to&&((from==="month"||from==="year"||to==="month"||to==="year")&&(!factorFor(units.time.find(u=>u.id===from))||!factorFor(units.time.find(u=>u.id===to))))){
+   $("resultMain").textContent="Cần chọn quy ước tháng/năm.";
+   $("explanation").textContent="Tháng và năm có độ dài khác nhau theo lịch. Chọn quy ước phù hợp với bài tập để tính.";
+   $("feedback").textContent="Chưa thể đổi chính xác nếu thiếu quy ước."; $("feedback").className="error";return;
+ }
+ const f1=factorFor(units[kind].find(u=>u.id===from)),f2=factorFor(units[kind].find(u=>u.id===to));
+ let result;
+ try{result=div(mul(a,f1),f2)}catch(e){$("resultMain").textContent="Không thể tính giá trị này.";return}
+ $("resultMain").textContent=fmt(a)+" "+shortName(from)+" = "+fmt(result)+" "+shortName(to);
+ if(from===to){$("explanation").textContent="Hai đơn vị giống nhau nên giá trị được giữ nguyên."}
+ else{
+  const base=kind==="length"?"mét (m)":kind==="mass"?"kilôgam (kg)":"giây (s)";
+  const ratio=div(f1,f2);
+  const multiply= !ratio.startsWith("-") && compareAbs(ratio,"1")>=0;
+  $("explanation").textContent="Quy về "+base+" rồi đổi sang đơn vị đích. Hệ số chuyển trực tiếp: "+fmt(ratio)+". Ta tính "+fmt(a)+" × "+fmt(ratio)+" = "+fmt(result)+".";
+ }
+ if(a.startsWith("-")&&kind!=="time"||a.startsWith("-")&&kind==="time"){$("feedback").textContent="Lưu ý: số âm có thể biểu diễn độ thay đổi trong toán học, nhưng thường không dùng cho chiều dài/khối lượng/thời lượng thực tế.";$("feedback").className="error"}
+}
+document.querySelectorAll(".category").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".category").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");kind=btn.dataset.kind;populateUnits();
+}));
+["amount","fromUnit","toUnit","timeMode"].forEach(id=>$(id).addEventListener(id==="amount"?"input":"change",updateConversion));
+$("swap").addEventListener("click",()=>{const a=$("fromUnit").value;$("fromUnit").value=$("toUnit").value;$("toUnit").value=a;updateConversion()});
+$("clear").addEventListener("click",()=>{$("amount").value="";updateConversion();$("amount").focus()});
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));
+ ["convert","practice","challenge","guide"].forEach(id=>$(id).classList.toggle("hidden",id!==btn.dataset.tab));
+ if(btn.dataset.tab==="practice"&&!quiz.current)nextQuiz(); if(btn.dataset.tab==="challenge"&&!game.current)showGameIntro();
+}));
+
+// Question banks use exact integer ratios or decimal values that are terminating in base 10.
+const questionSeeds=[
+ {q:"Đổi 1 km sang m.",opts:["100 m","1.000 m","10.000 m","10 m"],correct:1,why:"1 km = 1.000 m."},
+ {q:"Đổi 0,5 m sang cm.",opts:["5 cm","500 cm","50 cm","0,05 cm"],correct:2,why:"1 m = 100 cm nên 0,5 × 100 = 50 cm."},
+ {q:"Đổi 2,75 kg sang g.",opts:["275 g","2.750 g","27.500 g","0,00275 g"],correct:1,why:"1 kg = 1.000 g nên 2,75 × 1.000 = 2.750 g."},
+ {q:"Đổi 1 tấn sang kg.",opts:["100 kg","10.000 kg","1.000 kg","10 kg"],correct:2,why:"1 tấn = 1.000 kg."},
+ {q:"3 giờ bằng bao nhiêu phút?",opts:["30 phút","180 phút","90 phút","3.600 phút"],correct:1,why:"1 giờ = 60 phút; 3 × 60 = 180 phút."},
+ {q:"150 giây bằng bao nhiêu phút?",opts:["1,5 phút","25 phút","2,5 phút","15 phút"],correct:2,why:"150 ÷ 60 = 2,5 phút."},
+ {q:"0,25 ngày bằng bao nhiêu giờ?",opts:["4 giờ","6 giờ","12 giờ","2,5 giờ"],correct:1,why:"1 ngày = 24 giờ; 0,25 × 24 = 6 giờ."},
+ {q:"2,5 kg bằng bao nhiêu mg?",opts:["250.000 mg","25.000 mg","2.500.000 mg","2.500 mg"],correct:2,why:"1 kg = 1.000.000 mg; 2,5 kg = 2.500.000 mg."},
+ {q:"1.250 mm bằng bao nhiêu m?",opts:["12,5 m","1,25 m","0,125 m","125 m"],correct:1,why:"1 m = 1.000 mm; 1.250 ÷ 1.000 = 1,25 m."},
+ {q:"Đổi 750 g sang kg.",opts:["75 kg","7,5 kg","0,75 kg","0,075 kg"],correct:2,why:"1 kg = 1.000 g; 750 ÷ 1.000 = 0,75 kg."},
+ {q:"2 tuần bằng bao nhiêu ngày?",opts:["14 ngày","12 ngày","10 ngày","21 ngày"],correct:0,why:"1 tuần = 7 ngày; 2 × 7 = 14 ngày."},
+ {q:"Đổi 4,2 m sang mm.",opts:["420 mm","4.200 mm","42.000 mm","0,0042 mm"],correct:1,why:"1 m = 1.000 mm; 4,2 × 1.000 = 4.200 mm."}
+];
+const quiz={current:null,index:0,score:0,right:0,answered:false,deck:[]};
+function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(p=>p[1])}
+function resetQuiz(){quiz.index=0;quiz.score=0;quiz.right=0;quiz.answered=false;quiz.deck=shuffle(questionSeeds).slice(0,10);$("score").textContent="0";$("rightCount").textContent="0";nextQuiz()}
+function nextQuiz(){
+ if(!quiz.deck.length)quiz.deck=shuffle(questionSeeds).slice(0,10);
+ if(quiz.index>=10){$("quizArea").innerHTML="<h3>🎉 Hoàn thành lượt luyện tập!</h3><p>Em trả lời đúng "+quiz.right+"/10 câu, đạt "+quiz.score+" điểm.</p>";$("quizFeedback").textContent="Nhấn “Làm lại” để thử sức lần nữa.";quiz.current=null;return}
+ quiz.current=quiz.deck[quiz.index];quiz.answered=false;
+ $("qCount").textContent=(quiz.index+1)+"/10";$("quizFeedback").textContent="";
+ $("quizArea").innerHTML="<h3>Câu "+(quiz.index+1)+". "+quiz.current.q+"</h3><div class='answers'></div>";
+ const box=$("quizArea").querySelector(".answers");
+ quiz.current.opts.forEach((opt,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+". "+opt;b.addEventListener("click",()=>answerQuiz(i,b));box.appendChild(b)});
+}
+function answerQuiz(i,button){
+ if(quiz.answered)return;quiz.answered=true;const q=quiz.current;const buttons=$("quizArea").querySelectorAll(".answer");
+ buttons.forEach((b,j)=>{b.disabled=true;if(j===q.correct)b.classList.add("correct")});
+ if(i===q.correct){quiz.score+=10;quiz.right++;$("quizFeedback").innerHTML="<p class='success'>Chính xác! +10 điểm.</p><p>"+q.why+"</p>"}
+ else{button.classList.add("wrong");$("quizFeedback").innerHTML="<p class='error'>Chưa đúng. Đáp án đúng là "+q.opts[q.correct]+".</p><p>"+q.why+"</p>"}
+ $("score").textContent=quiz.score;$("rightCount").textContent=quiz.right;quiz.index++;
+}
+$("nextQuestion").addEventListener("click",()=>{if(!quiz.current){resetQuiz();return}if(!quiz.answered){$("quizFeedback").textContent="Hãy chọn một đáp án trước khi sang câu tiếp theo.";return}nextQuiz()});
+$("restartQuiz").addEventListener("click",resetQuiz);
+
+const game={current:null,score:0,streak:0,count:0,answered:false};
+function showGameIntro(){$("gameArea").textContent="Nhấn “Bắt đầu thử thách” để khám phá nhé!";$("gameFeedback").textContent="";$("nextGame").classList.add("hidden")}
+function newGameQuestion(){
+ const q=shuffle(questionSeeds)[0];game.current=q;game.answered=false;
+ $("gameArea").innerHTML="<h3>"+q.q+"</h3><div class='answers'></div>";const box=$("gameArea").querySelector(".answers");
+ q.opts.forEach((opt,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+". "+opt;b.addEventListener("click",()=>answerGame(i,b));box.appendChild(b)});
+ $("gameFeedback").textContent="";$("nextGame").classList.add("hidden");
+}
+function answerGame(i,button){
+ if(game.answered)return;game.answered=true;game.count++;const q=game.current;const buttons=$("gameArea").querySelectorAll(".answer");
+ buttons.forEach((b,j)=>{b.disabled=true;if(j===q.correct)b.classList.add("correct")});
+ if(i===q.correct){game.score+=10;game.streak++;$("gameFeedback").innerHTML="<p class='success'>Tuyệt vời! +10 điểm.</p><p>"+q.why+"</p>"}
+ else{button.classList.add("wrong");game.streak=0;$("gameFeedback").innerHTML="<p class='error'>Đáp án đúng: "+q.opts[q.correct]+".</p><p>"+q.why+"</p>"}
+ $("gameScore").textContent=game.score;$("streak").textContent=game.streak;$("gameCount").textContent=game.count;$("nextGame").classList.remove("hidden");
+}
+$("startGame").addEventListener("click",()=>{game.score=0;game.streak=0;game.count=0;$("gameScore").textContent="0";$("streak").textContent="0";$("gameCount").textContent="0";newGameQuestion()});
+$("nextGame").addEventListener("click",newGameQuestion);
+
+// Start with sensible default units and initialize practice content.
+populateUnits();
+resetQuiz();
+</script>
+</body>
+</html>
